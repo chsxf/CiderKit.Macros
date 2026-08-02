@@ -44,6 +44,7 @@ let package = Package(
             name: "CiderKitMacros_Tests",
             dependencies: [
                 "CiderKitMacros_Macros",
+                "CiderKitMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]
         ),

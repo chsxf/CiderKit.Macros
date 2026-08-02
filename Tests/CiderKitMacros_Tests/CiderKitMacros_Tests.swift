@@ -10,6 +10,8 @@ let testMacros: [String: Macro.Type] = [
     "MutatingProperty": MutatingPropertyMacro.self
 ]
 
+let helloWorld = "Hello, World!"
+
 final class CiderKitMacros_Tests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
@@ -92,5 +94,27 @@ final class CiderKitMacros_Tests: XCTestCase {
             """,
             macros: testMacros
         )
+    }
+    
+    func testExecutingMacro() throws {
+        let t = TestStructWithMacros(i: 10, b: true, s: helloWorld)
+        assert(t.i == 10)
+        assert(t.b)
+        assert(t.s == helloWorld)
+        
+        let t2 = t.mutated(withB: false)
+        assert(t2.i == 10)
+        assert(t2.b == false)
+        assert(t2.s == helloWorld)
+        
+        let t3 = t.mutated(withI: 20)
+        assert(t3.i == 20)
+        assert(t3.b == true)
+        assert(t3.s == helloWorld)
+        
+        let t4 = t2.mutated(withI: 30)
+        assert(t4.i == 30)
+        assert(t4.b == false)
+        assert(t4.s == helloWorld)
     }
 }
