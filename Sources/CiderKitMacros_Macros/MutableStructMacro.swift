@@ -11,6 +11,12 @@ public struct MutableStructMacro: MemberMacro {
         }
         
         let accessibleStoredProperties = structEnclosingType.accessibleStoredProperties()
+        
+        let mutatingPropertyCount = accessibleStoredProperties.count { $0.hasAttribute("MutatingProperty") }
+        if mutatingPropertyCount == 0 {
+            return []
+        }
+        
         let membersInfo = accessibleStoredProperties.compactMap { $0.memberBasicInfo }
         
         var result = [DeclSyntax]()

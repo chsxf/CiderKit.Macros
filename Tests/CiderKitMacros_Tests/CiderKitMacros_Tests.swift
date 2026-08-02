@@ -8,6 +8,7 @@ import CiderKitMacros_Macros
 
 let testMacros: [String: Macro.Type] = [
     "MutableStruct": MutableStructMacro.self,
+    "MutatingProperty": MutatingPropertyMacro.self
 ]
 
 final class CiderKitMacros_Tests: XCTestCase {
@@ -24,9 +25,9 @@ final class CiderKitMacros_Tests: XCTestCase {
             expandedSource:
             """
             struct TestStruct {
-                @MutatingProperty public let a: Int
+                public let a: Int
                 public let b: String
-                @MutatingProperty public let c: Bool
+                public let c: Bool
             
                 public init(
                     a: Int,
@@ -45,6 +46,49 @@ final class CiderKitMacros_Tests: XCTestCase {
                 public func with(newC: Bool) -> Self {
                     .init(a: a, b: b, c: newC)
                 }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+    
+    func testMacroWithoutProperties() throws {
+        assertMacroExpansion(
+            """
+            @MutableStruct
+            struct TestStruct {
+                public let a: Int
+                public let b: String
+                public let c: Bool
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStruct {
+                public let a: Int
+                public let b: String
+                public let c: Bool
+            }
+            """,
+            macros: testMacros
+        )
+    }
+    
+    func testPropertiesWithoutMacro() throws {
+        assertMacroExpansion(
+            """
+            struct TestStruct {
+                @MutatingProperty public let a: Int
+                public let b: String
+                @MutatingProperty public let c: Bool
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStruct {
+                public let a: Int
+                public let b: String
+                public let c: Bool
             }
             """,
             macros: testMacros
