@@ -1,50 +1,53 @@
-/*
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-// Macro implementations build for the host, so the corresponding module is not available when cross-compiling. Cross-compiled tests may still make use of the macro itself in end-to-end tests.
-#if canImport(CiderKitMacros_Macros)
 import CiderKitMacros_Macros
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "MutableStruct": MutableStructMacro.self,
 ]
-#endif
 
 final class CiderKitMacros_Tests: XCTestCase {
     func testMacro() throws {
-        #if canImport(CiderKit_MacrosMacros)
         assertMacroExpansion(
             """
-            #stringify(a + b)
+            @MutableStruct
+            struct TestStruct {
+                @MutatingProperty public let a: Int
+                public let b: String
+                @MutatingProperty public let c: Bool
+            }
             """,
-            expandedSource: """
-            (a + b, "a + b")
+            expandedSource:
+            """
+            struct TestStruct {
+                @MutatingProperty public let a: Int
+                public let b: String
+                @MutatingProperty public let c: Bool
+            
+                public init(
+                    a: Int,
+                    b: String,
+                    c: Bool
+                ) {
+                    self.a = a
+                    self.b = b
+                    self.c = c
+                }
+            
+                public func with(newA: Int) -> Self {
+                    .init(a: newA, b: b, c: c)
+                }
+            
+                public func with(newC: Bool) -> Self {
+                    .init(a: a, b: b, c: newC)
+                }
+            }
             """,
             macros: testMacros
         )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
-    }
-
-    func testMacroWithStringLiteral() throws {
-        #if canImport(CiderKit_MacrosMacros)
-        assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
-            macros: testMacros
-        )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
     }
 }
-*/

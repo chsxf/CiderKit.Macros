@@ -45,18 +45,16 @@ public struct MutableStructMacro: MemberMacro {
         let newParameterName = "new\(propertyMemberName.first!.uppercased())\(propertyMemberName[secondCharactetIndex...])"
         
         return """
-            public func with(\(raw: newParameterName): \(raw: propertyMemberInfo.type)) -> Self {
-                .init(
-                \(raw: allMembersInfo.map { memberInfo in
-                    if memberInfo.name == propertyMemberName {
-                        "\(memberInfo.name): \(newParameterName)"
-                    }
-                    else {  
-                        "\(memberInfo.name): \(memberInfo.name)"
-                    }
-                }.joined(separator: ",\n"))
-                )
-            }
+        public func with(\(raw: newParameterName): \(raw: propertyMemberInfo.type)) -> Self {
+            .init(\(raw: allMembersInfo.map { memberInfo in
+                if memberInfo.name == propertyMemberName {
+                    "\(memberInfo.name): \(newParameterName)"
+                }
+                else {
+                    "\(memberInfo.name): \(memberInfo.name)"
+                }
+            }.joined(separator: ", ")))
+        }
         """
     }
     
