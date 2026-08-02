@@ -3,7 +3,6 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
-
 import CiderKitMacros_Macros
 
 let testMacros: [String: Macro.Type] = [
@@ -39,11 +38,11 @@ final class CiderKitMacros_Tests: XCTestCase {
                     self.c = c
                 }
             
-                public func with(newA: Int) -> Self {
+                public func mutated(withA newA: Int) -> Self {
                     .init(a: newA, b: b, c: c)
                 }
             
-                public func with(newC: Bool) -> Self {
+                public func mutated(withC newC: Bool) -> Self {
                     .init(a: a, b: b, c: newC)
                 }
             }

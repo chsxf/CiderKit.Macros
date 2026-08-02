@@ -14,5 +14,5 @@ struct Test: CustomStringConvertible {
 let t = Test(a: 10, b: "Hello, world!", c: false)
 print(t)
 
-let t2 = t.with(newA: 20)
+let t2 = t.mutated(withA: 20)
 print(t2)
