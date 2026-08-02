@@ -39,11 +39,11 @@ struct TestStruct {
         self.b = b
     }
     
-    public func with(newI: Int) -> Self {
+    public func mutated(withI newI: Int) -> Self {
         .init(i: newI, s: s, b: s)
     }
     
-    public func with(newB: Bool) -> Self {
+    public func mutated(withB newB: Bool) -> Self {
         .init(i: i, s: s, b: newB)
     }
 }
@@ -53,8 +53,8 @@ You can then create modified version of the same value like this:
 
 ```swift
 let t = TestStruct(i: 10, s: "Hellow, World!", b: true)
-let t2 = t.with(newB: false)
-let t3 = t.with(newI: 20)
+let t2 = t.mutated(withB: false)
+let t3 = t.mutated(withI: 20)
 ```
 
 # Installation with Swift Package Manager
