@@ -5,6 +5,7 @@ import SwiftSyntaxMacros
 struct CiderKit_MacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         MutableStructMacro.self,
+        MutableStructOptionalMacro.self,
         MutatingPropertyMacro.self
     ]
 }

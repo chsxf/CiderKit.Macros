@@ -1,6 +1,6 @@
 import SwiftSyntax
 
-internal typealias MemberBasicInfo = (name: String, type: String)
+internal typealias MemberBasicInfo = (name: String, type: String, makeOptional: Bool, withDefaultValue: String?, keepValueDuringMutation: Bool)
 
 internal extension VariableDeclSyntax {
     
@@ -65,15 +65,19 @@ internal extension VariableDeclSyntax {
         }
         let trimmedType = String(type[index...])
 
-        return (name: name.text, type: trimmedType)
+        return (name: name.text, type: trimmedType, makeOptional: false, withDefaultValue: nil, keepValueDuringMutation: true)
     }
     
     func hasAttribute(_ searchedAttributeName: String) -> Bool {
+        self.getAttribute(searchedAttributeName) != nil
+    }
+    
+    func getAttribute(_ searchedAttributeName: String) -> AttributeSyntax? {
         for attributeListChild in attributes {
             switch attributeListChild {
                 case .attribute(let attributeSyntax):
                     if attributeSyntax.attributeName.trimmedDescription == searchedAttributeName {
-                        return true
+                        return attributeSyntax
                     }
                     break
                     
@@ -81,7 +85,7 @@ internal extension VariableDeclSyntax {
                     break
             }
         }
-        return false
+        return nil
     }
     
 }

@@ -17,16 +17,37 @@ public struct MutableStructMacro: MemberMacro {
             return []
         }
         
-        let membersInfo = accessibleStoredProperties.compactMap { $0.memberBasicInfo }
-        
+        var allMembersInfo = [MemberBasicInfo]()
+        var mutatingProperties = [MemberBasicInfo]()
+
         var result = [DeclSyntax]()
-        result.append(buildInitializer(membersInfo))
         
         for storedProperty in accessibleStoredProperties {
-            if storedProperty.hasAttribute("MutatingProperty"), let mutatingPropertyDecl = generateMutatingProperty(storedProperty, allMembersInfo: membersInfo) {
-                result.append(mutatingPropertyDecl)
+            guard var memberInfo = storedProperty.memberBasicInfo else { continue }
+            
+            if let attribute = storedProperty.getAttribute("MutableStructOptional") {
+                memberInfo.makeOptional = true
+
+                if let stringLiteral = attribute.argument(for: "defaultValue")?.as(StringLiteralExprSyntax.self) {
+                    memberInfo.withDefaultValue = stringLiteral.representedLiteralValue
+                }
+
+                if let keepValueLiteral = attribute.argument(for: "keepValueDuringMutation")?.as(BooleanLiteralExprSyntax.self), keepValueLiteral.literal.tokenKind == .keyword(.false) {
+                    memberInfo.keepValueDuringMutation = false
+                }
             }
+
+            if storedProperty.hasAttribute("MutatingProperty") {
+                mutatingProperties.append(memberInfo)
+            }
+
+            allMembersInfo.append(memberInfo)
         }
+
+        allMembersInfo.sort { !$0.makeOptional && $1.makeOptional }
+
+        result.append(buildInitializer(allMembersInfo))
+        result.append(contentsOf: mutatingProperties.map { generateMutatingProperty($0, allMembersInfo: allMembersInfo) })
         
         return result
     }
@@ -34,18 +55,27 @@ public struct MutableStructMacro: MemberMacro {
     fileprivate static func buildInitializer(_ membersInfo: [MemberBasicInfo]) -> DeclSyntax {
         return """
         public init(
-            \(raw: membersInfo.map { "\($0.name): \($0.type)" }.joined(separator: ",\n"))
+            \(raw: membersInfo.map {
+                var result = "\($0.name): \($0.type)"
+                if $0.makeOptional {
+                    result += "? = nil"
+                }
+                return result
+            }.joined(separator: ",\n"))
         ) {
             \(raw: membersInfo.map { memberInfo in
-                "self.\(memberInfo.name) = \(memberInfo.name)"
+                if memberInfo.makeOptional {
+                    return "self.\(memberInfo.name) = \(memberInfo.name) ?? \(memberInfo.withDefaultValue ?? "nil")"
+                }
+                else {
+                    return "self.\(memberInfo.name) = \(memberInfo.name)"
+                }
             }.joined(separator: "\n"))
         }
         """
     }
     
-    fileprivate static func generateMutatingProperty(_ property: VariableDeclSyntax, allMembersInfo: [MemberBasicInfo]) -> DeclSyntax? {
-        guard let propertyMemberInfo = property.memberBasicInfo else { return nil }
-        
+    fileprivate static func generateMutatingProperty(_ propertyMemberInfo: MemberBasicInfo, allMembersInfo: [MemberBasicInfo]) -> DeclSyntax {
         let propertyMemberName = propertyMemberInfo.name
         let secondCharactetIndex = propertyMemberName.index(propertyMemberName.startIndex, offsetBy: 1)
         let uppercasedMemberName = "\(propertyMemberName.first!.uppercased())\(propertyMemberName[secondCharactetIndex...])"
@@ -54,9 +84,12 @@ public struct MutableStructMacro: MemberMacro {
         
         return """
         public func mutated(\(raw: newParameterName) \(raw: newLocalParameterName): \(raw: propertyMemberInfo.type)) -> Self {
-            .init(\(raw: allMembersInfo.map { memberInfo in
+            .init(\(raw: allMembersInfo.compactMap { memberInfo in
                 if memberInfo.name == propertyMemberName {
                     "\(memberInfo.name): \(newLocalParameterName)"
+                }
+                else if memberInfo.makeOptional && !memberInfo.keepValueDuringMutation {
+                    nil
                 }
                 else {
                     "\(memberInfo.name): \(memberInfo.name)"
