@@ -1,0 +1,20 @@
+excluded:
+  - .build
+
+identifier_name:
+    min_length: 1
+
+line_length: 220
+
+switch_case_alignment:
+    indented_cases: true
+
+large_tuple: 
+    warning: 10
+    error: 10
+
+function_body_length:
+    warning: 75
+
+type_name:
+  allowed_symbols: ["_"]

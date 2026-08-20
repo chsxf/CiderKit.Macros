@@ -2,11 +2,11 @@ import CiderKitMacros
 
 @MutableStruct
 struct TestStruct {
-    
+
     @MutatingProperty public let i: Int
     @MutatingProperty public let b: Bool
     public let s: String
-    
+
 }
 
 @MutableStruct

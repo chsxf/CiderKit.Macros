@@ -1,7 +1,7 @@
 import SwiftSyntax
 
 internal extension DeclGroupSyntax {
-    
+
     /// Get the stored properties from the declaration based on syntax.
     func accessibleStoredProperties() -> [VariableDeclSyntax] {
         memberBlock.members.compactMap { member in
@@ -9,5 +9,5 @@ internal extension DeclGroupSyntax {
             return variable
         }
     }
-    
+
 }

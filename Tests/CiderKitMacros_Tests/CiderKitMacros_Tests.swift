@@ -30,7 +30,7 @@ final class CiderKitMacros_Tests: XCTestCase {
                 public let a: Int
                 public let b: String
                 public let c: Bool
-            
+
                 public init(
                     a: Int,
                     b: String,
@@ -40,11 +40,11 @@ final class CiderKitMacros_Tests: XCTestCase {
                     self.b = b
                     self.c = c
                 }
-            
+
                 public func mutated(withA newA: Int) -> Self {
                     .init(a: newA, b: b, c: c)
                 }
-            
+
                 public func mutated(withC newC: Bool) -> Self {
                     .init(a: a, b: b, c: newC)
                 }
@@ -53,7 +53,7 @@ final class CiderKitMacros_Tests: XCTestCase {
             macros: testMacros
         )
     }
-    
+
     func testExpansionMacroWithoutProperties() throws {
         assertMacroExpansion(
             """
@@ -75,7 +75,7 @@ final class CiderKitMacros_Tests: XCTestCase {
             macros: testMacros
         )
     }
-    
+
     func testExpansionPropertiesWithoutMacro() throws {
         assertMacroExpansion(
             """
@@ -117,7 +117,7 @@ final class CiderKitMacros_Tests: XCTestCase {
                 public let s: String
                 public let initOptionalProperty: Float
                 public let initOptionalProperty2: Float
-            
+
                 public init(
                     i: Int,
                     b: Bool,
@@ -164,7 +164,7 @@ final class CiderKitMacros_Tests: XCTestCase {
                 public let i: Int
                 public let b: Bool
                 public let s: String
-            
+
                 public init(
                     i: Int,
                     b: Bool,
@@ -182,11 +182,11 @@ final class CiderKitMacros_Tests: XCTestCase {
                 public func mutated(withInitOptionalProperty newInitOptionalProperty: Float) -> Self {
                     .init(i: i, b: b, s: s, initOptionalProperty: newInitOptionalProperty)
                 }
-            
+
                 public func mutated(withInitOptionalProperty2 newInitOptionalProperty2: Float) -> Self {
                     .init(i: i, b: b, s: s, initOptionalProperty: initOptionalProperty, initOptionalProperty2: newInitOptionalProperty2)
                 }
-            
+
                 public func mutated(withI newI: Int) -> Self {
                     .init(i: newI, b: b, s: s, initOptionalProperty: initOptionalProperty)
                 }
@@ -204,17 +204,17 @@ final class CiderKitMacros_Tests: XCTestCase {
         assert(test.i == 10)
         assert(test.b)
         assert(test.s == helloWorld)
-        
+
         let test2 = test.mutated(withB: false)
         assert(test2.i == 10)
         assert(test2.b == false)
         assert(test2.s == helloWorld)
-        
+
         let test3 = test.mutated(withI: 20)
         assert(test3.i == 20)
         assert(test3.b == true)
         assert(test3.s == helloWorld)
-        
+
         let test4 = test2.mutated(withI: 30)
         assert(test4.i == 30)
         assert(test4.b == false)

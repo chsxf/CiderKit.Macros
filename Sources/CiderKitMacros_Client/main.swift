@@ -7,7 +7,7 @@ struct Test: CustomStringConvertible {
     @MutatingProperty public let a: Int
     public let b: String
     @MutatingProperty public let c: Bool
-    
+
     var description: String {
         "a: \(a), b: \"\(b)\", c: \(c)"
     }
@@ -26,7 +26,7 @@ struct TestWithOptional: CustomStringConvertible {
     @MutatingProperty public let a: Int
     public let b: String
     @MutatingProperty public let c: Bool
-    
+
     @MutableStructOptional(defaultValue: "123") public let initOptionalProperty: Int
     @MutableStructOptional(defaultValue: "456", keepValueDuringMutation: false) public let initOptionalProperty2: Int
 
