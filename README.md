@@ -59,6 +59,9 @@ let t2 = t.mutated(withB: false)
 let t3 = t.mutated(withI: 20)
 ```
 
+> [!TIP]
+> You can provide custom implementation of the initiliazers or the `mutated` functions. The macro will detect their presence automatically and avoid generating its own version instead.
+
 ## `MutableStructOptional`
 
 This macro must be used in association with `MutableStruct`.
@@ -121,7 +124,7 @@ To install it, simply add the dependency to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/chsxf/CiderKit.Macros.git", from: "0.2.0"),
+    .package(url: "https://github.com/chsxf/CiderKit.Macros.git", from: "0.3.0"),
 ],
 targets: [
     .target(name: "YourTarget", dependencies: ["CiderKit.Macros"]),
@@ -131,7 +134,7 @@ targets: [
 ## As a Project Dependency in Xcode
 
 - In Xcode, select **File > Add Packages...** and enter `https://github.com/chsxf/CiderKit.Macros.git` in the search field (top-right). 
-- Then select **Up to Next Major Version** as the **Dependency Rule** with `0.2.0` in the associated text field.
+- Then select **Up to Next Major Version** as the **Dependency Rule** with `0.3.0` in the associated text field.
 - Then select the project of your choice in the **Add to Project** list.
 - Finally, click the **Add Package** button.
 
