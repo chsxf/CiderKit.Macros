@@ -46,13 +46,20 @@ public struct MutableStructMacro: MemberMacro {
 
         allMembersInfo.sort { !$0.makeOptional && $1.makeOptional }
 
-        result.append(buildInitializer(allMembersInfo))
-        result.append(contentsOf: mutatingProperties.map { generateMutatingProperty($0, allMembersInfo: allMembersInfo) })
+        if let initSyntax = buildInitializer(structEnclosingType: structEnclosingType, membersInfo: allMembersInfo) {
+            result.append(initSyntax)
+        }
+        result.append(contentsOf: mutatingProperties.compactMap {
+            generateMutatingProperty(structEnclosingType: structEnclosingType, propertyMemberInfo: $0, allMembersInfo: allMembersInfo)
+        })
 
         return result
     }
 
-    fileprivate static func buildInitializer(_ membersInfo: [MemberBasicInfo]) -> DeclSyntax {
+    fileprivate static func buildInitializer(structEnclosingType: StructDeclSyntax, membersInfo: [MemberBasicInfo]) -> DeclSyntax? {
+        let memberNames = membersInfo.map { $0.name }
+        guard !structEnclosingType.hasExistingInitializer(withOrderedParameterNames: memberNames) else { return nil }
+
         return """
         public init(
             \(raw: membersInfo.map {
@@ -74,12 +81,14 @@ public struct MutableStructMacro: MemberMacro {
         """
     }
 
-    fileprivate static func generateMutatingProperty(_ propertyMemberInfo: MemberBasicInfo, allMembersInfo: [MemberBasicInfo]) -> DeclSyntax {
+    fileprivate static func generateMutatingProperty(structEnclosingType: StructDeclSyntax, propertyMemberInfo: MemberBasicInfo, allMembersInfo: [MemberBasicInfo]) -> DeclSyntax? {
         let propertyMemberName = propertyMemberInfo.name
         let secondCharactetIndex = propertyMemberName.index(propertyMemberName.startIndex, offsetBy: 1)
         let uppercasedMemberName = "\(propertyMemberName.first!.uppercased())\(propertyMemberName[secondCharactetIndex...])"
         let newParameterName = "with\(uppercasedMemberName)"
         let newLocalParameterName = "new\(uppercasedMemberName)"
+
+        guard !structEnclosingType.hasExistingMethod(named: "mutated", withOrderedParameterNames: [newParameterName]) else { return nil }
 
         return """
         public func mutated(\(raw: newParameterName) \(raw: newLocalParameterName): \(raw: propertyMemberInfo.type)) -> Self {

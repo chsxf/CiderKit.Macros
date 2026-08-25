@@ -199,6 +199,82 @@ final class CiderKitMacros_Tests: XCTestCase {
             macros: testMacros)
     }
 
+    func testExpansionWithExistingFunction() {
+        assertMacroExpansion(
+            """
+            @MutableStruct
+            struct TestStructWithPreexistingFunction {
+                @MutatingProperty public let a: Int
+                @MutatingProperty public let b: Int
+
+                func mutated(withA newA: Int) -> Self {
+                    .init(a: newA, b: b + newA)
+                }
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStructWithPreexistingFunction {
+                public let a: Int
+                public let b: Int
+
+                func mutated(withA newA: Int) -> Self {
+                    .init(a: newA, b: b + newA)
+                }
+
+                public init(
+                    a: Int,
+                    b: Int
+                ) {
+                    self.a = a
+                    self.b = b
+                }
+
+                public func mutated(withB newB: Int) -> Self {
+                    .init(a: a, b: newB)
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+
+    func testExpansionWithExistingInitializer() {
+        assertMacroExpansion(
+            """
+            @MutableStruct
+            struct TestStructWithPreexistingFunction {
+                @MutatingProperty public let a: Int
+                @MutatingProperty public let b: Int
+
+                public init(a: Int, b: Int) {
+                    self.a = a
+                    self.b = a + b
+                }
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStructWithPreexistingFunction {
+                public let a: Int
+                public let b: Int
+
+                public init(a: Int, b: Int) {
+                    self.a = a
+                    self.b = a + b
+                }
+
+                public func mutated(withA newA: Int) -> Self {
+                    .init(a: newA, b: b)
+                }
+
+                public func mutated(withB newB: Int) -> Self {
+                    .init(a: a, b: newB)
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+
     func testExecution() throws {
         let test = TestStruct(i: 10, b: true, s: helloWorld)
         assert(test.i == 10)
