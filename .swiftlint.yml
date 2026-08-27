@@ -1,9 +1,6 @@
 excluded:
   - .build
 
-identifier_name:
-    min_length: 1
-
 line_length: 220
 
 switch_case_alignment:
