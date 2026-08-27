@@ -199,7 +199,7 @@ final class CiderKitMacros_Tests: XCTestCase {
             macros: testMacros)
     }
 
-    func testExpansionWithExistingFunction() {
+    func testExpansionWithExistingFunction() throws {
         assertMacroExpansion(
             """
             @MutableStruct
@@ -238,7 +238,7 @@ final class CiderKitMacros_Tests: XCTestCase {
             macros: testMacros)
     }
 
-    func testExpansionWithExistingInitializer() {
+    func testExpansionWithExistingInitializer() throws {
         assertMacroExpansion(
             """
             @MutableStruct
@@ -275,7 +275,37 @@ final class CiderKitMacros_Tests: XCTestCase {
             macros: testMacros)
     }
 
-    func testExecution() throws {
+    func testExpanionWithInitializedMember() throws {
+        assertMacroExpansion(
+            """
+            @MutableStruct
+            struct TestStructWithInitializedMember {
+                public let type: String = "test"
+                @MutatingProperty public let i: Int
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStructWithInitializedMember {
+                public let type: String = "test"
+                public let i: Int
+
+                public init(
+                    i: Int
+                ) {
+                    self.i = i
+                }
+
+                public func mutated(withI newI: Int) -> Self {
+                    .init(i: newI)
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    func testExecution() {
         let test = TestStruct(i: 10, b: true, s: helloWorld)
         assert(test.i == 10)
         assert(test.b)
@@ -295,47 +325,61 @@ final class CiderKitMacros_Tests: XCTestCase {
         assert(test4.i == 30)
         assert(test4.b == false)
         assert(test4.s == helloWorld)
+    }
 
-        let testWithOptional = TestStructWithOptional(i: 10, b: true, s: helloWorld, initOptionalProperty: 5.4)
-        assert(testWithOptional.i == 10)
-        assert(testWithOptional.b)
-        assert(testWithOptional.s == helloWorld)
-        assert(testWithOptional.initOptionalProperty == 5.4)
+    func testExecutionWithOptional() throws {
+        let test = TestStructWithOptional(i: 10, b: true, s: helloWorld, initOptionalProperty: 5.4)
+        assert(test.i == 10)
+        assert(test.b)
+        assert(test.s == helloWorld)
+        assert(test.initOptionalProperty == 5.4)
 
-        let testWithOptional2 = testWithOptional.mutated(withB: false)
-        assert(testWithOptional2.i == 10)
-        assert(testWithOptional2.b == false)
-        assert(testWithOptional2.s == helloWorld)
-        assert(testWithOptional2.initOptionalProperty == 5.4)
+        let test2 = test.mutated(withB: false)
+        assert(test2.i == 10)
+        assert(test2.b == false)
+        assert(test2.s == helloWorld)
+        assert(test2.initOptionalProperty == 5.4)
 
-        let testWithOptional3 = TestStructWithOptional(i: 10, b: true, s: helloWorld)
-        assert(testWithOptional3.i == 10)
-        assert(testWithOptional3.b)
-        assert(testWithOptional3.s == helloWorld)
-        assert(testWithOptional3.initOptionalProperty == 1.2)
+        let test3 = TestStructWithOptional(i: 10, b: true, s: helloWorld)
+        assert(test3.i == 10)
+        assert(test3.b)
+        assert(test3.s == helloWorld)
+        assert(test3.initOptionalProperty == 1.2)
+    }
 
-        let testWithMutatingOptional = TestStructWithMutatingOptional(i: 10, b: true, s: helloWorld, initOptionalProperty: 5.4)
-        assert(testWithMutatingOptional.i == 10)
-        assert(testWithMutatingOptional.b)
-        assert(testWithMutatingOptional.s == helloWorld)
-        assert(testWithMutatingOptional.initOptionalProperty == 5.4)
+    func testExecutionWithMutatingOptional() throws {
+        let test = TestStructWithMutatingOptional(i: 10, b: true, s: helloWorld, initOptionalProperty: 5.4)
+        assert(test.i == 10)
+        assert(test.b)
+        assert(test.s == helloWorld)
+        assert(test.initOptionalProperty == 5.4)
 
-        let testWithMutatingOptional2 = testWithMutatingOptional.mutated(withInitOptionalProperty: 3.6)
-        assert(testWithMutatingOptional2.i == 10)
-        assert(testWithMutatingOptional2.b)
-        assert(testWithMutatingOptional2.s == helloWorld)
-        assert(testWithMutatingOptional2.initOptionalProperty == 3.6)
+        let test2 = test.mutated(withInitOptionalProperty: 3.6)
+        assert(test2.i == 10)
+        assert(test2.b)
+        assert(test2.s == helloWorld)
+        assert(test2.initOptionalProperty == 3.6)
 
-        let testWithMutatingOptional3 = TestStructWithMutatingOptional(i: 10, b: true, s: helloWorld)
-        assert(testWithMutatingOptional3.i == 10)
-        assert(testWithMutatingOptional3.b)
-        assert(testWithMutatingOptional3.s == helloWorld)
-        assert(testWithMutatingOptional3.initOptionalProperty == 1.2)
+        let test3 = TestStructWithMutatingOptional(i: 10, b: true, s: helloWorld)
+        assert(test3.i == 10)
+        assert(test3.b)
+        assert(test3.s == helloWorld)
+        assert(test3.initOptionalProperty == 1.2)
 
-        let testWithMutatingOptional4 = testWithMutatingOptional3.mutated(withInitOptionalProperty: 7.8)
-        assert(testWithMutatingOptional4.i == 10)
-        assert(testWithMutatingOptional4.b)
-        assert(testWithMutatingOptional4.s == helloWorld)
-        assert(testWithMutatingOptional4.initOptionalProperty == 7.8)
+        let test4 = test3.mutated(withInitOptionalProperty: 7.8)
+        assert(test4.i == 10)
+        assert(test4.b)
+        assert(test4.s == helloWorld)
+        assert(test4.initOptionalProperty == 7.8)
+    }
+
+    func testExecutionWithInitializedMember() throws {
+        let test = TestStructWithInitializedMember(i: 10)
+        assert(test.type == "test")
+        assert(test.i == 10)
+
+        let test2 = test.mutated(withI: 20)
+        assert(test2.type == "test")
+        assert(test2.i == 20)
     }
 }

@@ -44,6 +44,10 @@ internal extension VariableDeclSyntax {
                     }
                     return true
             }
+        } else if isLet {
+            if bindings.first(where: { $0.initializer != nil }) != nil {
+                return false
+            }
         }
 
         return true

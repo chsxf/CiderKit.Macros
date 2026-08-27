@@ -28,8 +28,8 @@ internal extension DeclGroupSyntax {
         guard declaredParameters.count == orderedParameterNames.count else { return false }
 
         var parameterIndex = declaredParameters.startIndex
-        for i in 0..<orderedParameterNames.count {
-            if declaredParameters[parameterIndex].firstName.trimmedDescription != orderedParameterNames[i] {
+        for orderedParameterIndex in 0..<orderedParameterNames.count {
+            if declaredParameters[parameterIndex].firstName.trimmedDescription != orderedParameterNames[orderedParameterIndex] {
                 return false
             }
             parameterIndex = declaredParameters.index(after: parameterIndex)

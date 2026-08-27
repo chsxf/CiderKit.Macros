@@ -65,3 +65,13 @@ print(testWithMutatingOptional2)
 
 let testWithMutatingOptional3 = testWithMutatingOptional2.mutated(withInitOptionalProperty2: 101112)
 print(testWithMutatingOptional3)
+
+@MutableStruct
+struct TestWithInitializedMember: CustomStringConvertible {
+    public let type: String = "test"
+    @MutatingProperty public let i: Int
+
+    var description: String {
+        "type: \(type), i: \(i)"
+    }
+}

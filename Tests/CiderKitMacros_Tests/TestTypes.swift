@@ -30,3 +30,11 @@ struct TestStructWithMutatingOptional {
     @MutableStructOptional(defaultValue: "3.4", keepValueDuringMutation: false) @MutatingProperty public let initOptionalProperty2: Float
 
 }
+
+@MutableStruct
+struct TestStructWithInitializedMember {
+
+    public let type: String = "test"
+    @MutatingProperty public let i: Int
+
+}
