@@ -7,16 +7,19 @@ internal extension VariableDeclSyntax {
     var isVar: Bool { bindingSpecifier.tokenKind == .keyword(.var) }
     var isLet: Bool { bindingSpecifier.tokenKind == .keyword(.let) }
 
+    var isPublicOrInternal: Bool {
+        !modifiers.contains { $0.name.tokenKind == .keyword(.private) }
+        && !modifiers.contains(where: { $0.name.tokenKind == .keyword(.fileprivate) })
+        && !modifiers.contains(where: { $0.name.tokenKind == .keyword(.package) })
+        && !modifiers.contains(where: { $0.name.tokenKind == .keyword(.open) })
+    }
+
     var isAccessibleLetStoredProperty: Bool {
         isAccessibleStoredProperty && isLet
     }
 
     var isAccessibleStoredProperty: Bool {
-        guard isVar || isLet else {
-            return false
-        }
-
-        guard modifiers.contains(where: { $0.name.tokenKind == .keyword(.public) || $0.name.tokenKind == .keyword(.internal) }) || modifiers.isEmpty else {
+        guard (isVar || isLet) && isPublicOrInternal else {
             return false
         }
 

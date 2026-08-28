@@ -4,12 +4,16 @@ import SwiftSyntaxMacros
 public struct MutableStructOptionalMacro: PeerMacro {
 
     public static func expansion(of node: AttributeSyntax, providingPeersOf declaration: some DeclSyntaxProtocol, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
-        guard let storedPropertyDecl = declaration.as(VariableDeclSyntax.self), storedPropertyDecl.isAccessibleStoredProperty else {
-            throw MacroErrors.notAssociatedWithLetStoredProperty
+        guard let storedPropertyDecl = declaration.as(VariableDeclSyntax.self) else {
+            throw MacroErrors.notAssociatedWithStoredProperty
         }
 
-        if !storedPropertyDecl.modifiers.contains(where: { $0.name.tokenKind == .keyword(.public) || $0.name.tokenKind == .keyword(.internal) }) {
+        guard storedPropertyDecl.isPublicOrInternal else {
             throw MacroErrors.notPublicOrInternal
+        }
+
+        guard storedPropertyDecl.isAccessibleStoredProperty else {
+            throw MacroErrors.notAssociatedWithStoredProperty
         }
 
         return []

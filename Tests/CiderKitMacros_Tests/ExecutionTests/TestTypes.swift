@@ -4,7 +4,7 @@ import CiderKitMacros
 struct TestStruct {
 
     @MutatingProperty public let i: Int
-    @MutatingProperty public let b: Bool
+    @MutatingProperty let b: Bool
     public let s: String
 
 }

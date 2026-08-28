@@ -1,6 +1,6 @@
 public enum MacroErrors: Error {
 
-    case notAssociatedWithLetStoredProperty
+    case notAssociatedWithStoredProperty
     case notStructType
     case notPublicOrInternal
 

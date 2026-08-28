@@ -9,7 +9,7 @@ final class BasicExpansionTests: XCTestCase {
             struct TestStruct {
                 @MutatingProperty public let a: Int
                 public let b: String
-                @MutatingProperty public let c: Bool
+                @MutatingProperty let c: Bool
             }
             """,
             expandedSource:
@@ -17,7 +17,7 @@ final class BasicExpansionTests: XCTestCase {
             struct TestStruct {
                 public let a: Int
                 public let b: String
-                public let c: Bool
+                let c: Bool
 
                 public init(
                     a: Int,
