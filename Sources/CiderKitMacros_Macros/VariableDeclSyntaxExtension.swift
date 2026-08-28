@@ -14,13 +14,14 @@ internal extension VariableDeclSyntax {
 
     var isVar: Bool { bindingSpecifier.tokenKind == .keyword(.var) }
     var isLet: Bool { bindingSpecifier.tokenKind == .keyword(.let) }
+    var isStatic: Bool { modifiers.contains { $0.name.tokenKind == .keyword(.static) } }
 
     var isAccessibleLetStoredProperty: Bool {
         isAccessibleStoredProperty && isLet
     }
 
     var isAccessibleStoredProperty: Bool {
-        guard isVar || isLet else {
+        guard (isVar || isLet) && !isStatic else {
             return false
         }
 

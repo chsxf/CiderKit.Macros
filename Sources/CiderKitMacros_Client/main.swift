@@ -4,6 +4,8 @@ print("=== Mutable Struct")
 
 @MutableStruct
 struct Test: CustomStringConvertible {
+    @MainActor private static var test: Int = 10
+
     @MutatingProperty public let a: Int
     public let b: String
     @MutatingProperty public let c: Bool
