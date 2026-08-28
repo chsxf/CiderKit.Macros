@@ -1,6 +1,26 @@
 import SwiftSyntax
+import CiderKitMacrosCommon
 
-internal extension DeclGroupSyntax {
+internal extension StructDeclSyntax {
+
+    var accessLevel: AccessLevel {
+        for modifier in modifiers {
+            switch modifier.name.tokenKind {
+                case .keyword(.fileprivate):
+                    return .fileprivate
+                case .keyword(.package):
+                    return .package
+                case .keyword(.private):
+                    return .private
+                case .keyword(.public):
+                    return .public
+                default:
+                    break
+            }
+        }
+
+        return .internal
+    }
 
     /// Get the stored properties from the declaration based on syntax.
     func accessibleStoredProperties() -> [VariableDeclSyntax] {

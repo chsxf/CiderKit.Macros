@@ -2,6 +2,7 @@ import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import CiderKitMacrosCommon
 
 public struct MutableStructMacro: MemberMacro {
 
@@ -10,6 +11,7 @@ public struct MutableStructMacro: MemberMacro {
             throw MacroErrors.notStructType
         }
 
+        let structAccessLevel: AccessLevel = structEnclosingType.accessLevel
         let accessibleStoredProperties = structEnclosingType.accessibleStoredProperties()
 
         let mutatingPropertyCount = accessibleStoredProperties.count { $0.hasAttribute("MutatingProperty") }
@@ -46,7 +48,7 @@ public struct MutableStructMacro: MemberMacro {
 
         allMembersInfo.sort { !$0.makeOptional && $1.makeOptional }
 
-        if let initSyntax = buildInitializer(structEnclosingType: structEnclosingType, membersInfo: allMembersInfo) {
+        if let initSyntax = buildInitializer(structEnclosingType: structEnclosingType, membersInfo: allMembersInfo, accessLevel: structAccessLevel) {
             result.append(initSyntax)
         }
         result.append(contentsOf: mutatingProperties.compactMap {
@@ -56,12 +58,14 @@ public struct MutableStructMacro: MemberMacro {
         return result
     }
 
-    fileprivate static func buildInitializer(structEnclosingType: StructDeclSyntax, membersInfo: [MemberBasicInfo]) -> DeclSyntax? {
+    fileprivate static func buildInitializer(structEnclosingType: StructDeclSyntax, membersInfo: [MemberBasicInfo], accessLevel: AccessLevel) -> DeclSyntax? {
         let memberNames = membersInfo.map { $0.name }
         guard !structEnclosingType.hasExistingInitializer(withOrderedParameterNames: memberNames) else { return nil }
 
+        let accessLevelStr = accessLevel == .internal ? "" : "\(accessLevel) "
+
         return """
-        public init(
+        \(raw: accessLevelStr)init(
             \(raw: membersInfo.map {
                 var result = "\($0.name): \($0.type)"
                 if $0.makeOptional {
@@ -90,8 +94,10 @@ public struct MutableStructMacro: MemberMacro {
 
         guard !structEnclosingType.hasExistingMethod(named: "mutated", withOrderedParameterNames: [newParameterName]) else { return nil }
 
+        let accessLevelStr = propertyMemberInfo.accessLevel == .internal ? "" : "\(propertyMemberInfo.accessLevel) "
+
         return """
-        public func mutated(\(raw: newParameterName) \(raw: newLocalParameterName): \(raw: propertyMemberInfo.type)) -> Self {
+        \(raw: accessLevelStr)func mutated(\(raw: newParameterName) \(raw: newLocalParameterName): \(raw: propertyMemberInfo.type)) -> Self {
             .init(\(raw: allMembersInfo.compactMap { memberInfo in
                 if memberInfo.name == propertyMemberName {
                     "\(memberInfo.name): \(newLocalParameterName)"

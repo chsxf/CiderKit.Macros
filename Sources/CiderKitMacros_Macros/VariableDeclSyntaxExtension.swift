@@ -1,25 +1,26 @@
 import SwiftSyntax
+import CiderKitMacrosCommon
 
-internal typealias MemberBasicInfo = (name: String, type: String, makeOptional: Bool, withDefaultValue: String?, keepValueDuringMutation: Bool)
+internal typealias MemberBasicInfo = (
+    name: String,
+    type: String,
+    makeOptional: Bool,
+    withDefaultValue: String?,
+    keepValueDuringMutation: Bool,
+    accessLevel: AccessLevel
+)
 
 internal extension VariableDeclSyntax {
 
     var isVar: Bool { bindingSpecifier.tokenKind == .keyword(.var) }
     var isLet: Bool { bindingSpecifier.tokenKind == .keyword(.let) }
 
-    var isPublicOrInternal: Bool {
-        !modifiers.contains { $0.name.tokenKind == .keyword(.private) }
-        && !modifiers.contains(where: { $0.name.tokenKind == .keyword(.fileprivate) })
-        && !modifiers.contains(where: { $0.name.tokenKind == .keyword(.package) })
-        && !modifiers.contains(where: { $0.name.tokenKind == .keyword(.open) })
-    }
-
     var isAccessibleLetStoredProperty: Bool {
         isAccessibleStoredProperty && isLet
     }
 
     var isAccessibleStoredProperty: Bool {
-        guard (isVar || isLet) && isPublicOrInternal else {
+        guard isVar || isLet else {
             return false
         }
 
@@ -56,6 +57,25 @@ internal extension VariableDeclSyntax {
         return true
     }
 
+    var accessLevel: AccessLevel {
+        for modifier in modifiers {
+            switch modifier.name.tokenKind {
+                case .keyword(.fileprivate):
+                    return .fileprivate
+                case .keyword(.package):
+                    return .package
+                case .keyword(.private):
+                    return .private
+                case .keyword(.public):
+                    return .public
+                default:
+                    break
+            }
+        }
+
+        return .internal
+    }
+
     var memberBasicInfo: MemberBasicInfo? {
         guard
             // Get the property's name (a.k.a. identifier)...
@@ -72,7 +92,14 @@ internal extension VariableDeclSyntax {
         }
         let trimmedType = String(type[index...])
 
-        return (name: name.text, type: trimmedType, makeOptional: false, withDefaultValue: nil, keepValueDuringMutation: true)
+        return (
+            name: name.text,
+            type: trimmedType,
+            makeOptional: false,
+            withDefaultValue: nil,
+            keepValueDuringMutation: true,
+            accessLevel: accessLevel
+        )
     }
 
     func hasAttribute(_ searchedAttributeName: String) -> Bool {

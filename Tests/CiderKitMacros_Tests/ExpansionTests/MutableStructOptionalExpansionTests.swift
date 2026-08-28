@@ -23,7 +23,7 @@ final class MutableStructOptionalExpansionTests: XCTestCase {
                 public let initOptionalProperty: Float
                 public let initOptionalProperty2: Float
 
-                public init(
+                init(
                     i: Int,
                     b: Bool,
                     s: String,
@@ -70,7 +70,7 @@ final class MutableStructOptionalExpansionTests: XCTestCase {
                 public let b: Bool
                 public let s: String
 
-                public init(
+                init(
                     i: Int,
                     b: Bool,
                     s: String,

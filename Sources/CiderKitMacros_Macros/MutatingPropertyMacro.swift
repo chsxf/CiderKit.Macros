@@ -8,10 +8,6 @@ public struct MutatingPropertyMacro: PeerMacro {
             throw MacroErrors.notAssociatedWithStoredProperty
         }
 
-        guard storedPropertyDecl.isPublicOrInternal else {
-            throw MacroErrors.notPublicOrInternal
-        }
-
         guard storedPropertyDecl.isAccessibleStoredProperty else {
             throw MacroErrors.notAssociatedWithStoredProperty
         }

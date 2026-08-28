@@ -17,7 +17,7 @@ final class InitializedMemberExpansionTests: XCTestCase {
                 public let type: String = "test"
                 public let i: Int
 
-                public init(
+                init(
                     i: Int
                 ) {
                     self.i = i

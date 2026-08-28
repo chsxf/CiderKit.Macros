@@ -19,7 +19,7 @@ final class BasicExpansionTests: XCTestCase {
                 public let b: String
                 let c: Bool
 
-                public init(
+                init(
                     a: Int,
                     b: String,
                     c: Bool
@@ -33,7 +33,7 @@ final class BasicExpansionTests: XCTestCase {
                     .init(a: newA, b: b, c: c)
                 }
 
-                public func mutated(withC newC: Bool) -> Self {
+                func mutated(withC newC: Bool) -> Self {
                     .init(a: a, b: b, c: newC)
                 }
             }

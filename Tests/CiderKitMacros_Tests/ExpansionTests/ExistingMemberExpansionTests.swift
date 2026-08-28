@@ -25,7 +25,7 @@ final class ExistingMemberExpansionTests: XCTestCase {
                     .init(a: newA, b: b + newA)
                 }
 
-                public init(
+                init(
                     a: Int,
                     b: Int
                 ) {
