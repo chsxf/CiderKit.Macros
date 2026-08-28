@@ -6,6 +6,7 @@ Originally designed for [CiderKit](https://github.com/chsxf/CiderKit), these mac
 
 [![](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg)](https://gitmoji.dev/)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fchsxf%2FCiderKit.Macros%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/chsxf/CiderKit.Macros)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fchsxf%2FCiderKit.Macros%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/chsxf/CiderKit.Macros)
 [![Lint, Build & Test](https://github.com/chsxf/CiderKit.Macros/actions/workflows/swift.yml/badge.svg)](https://github.com/chsxf/CiderKit.Macros/actions/workflows/swift.yml)
 
 # Macros
