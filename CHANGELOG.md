@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Access levels are now preserved for the enclosing type and members:
     - Generated initializer will match the access level of the enclosing type
     - Mutation methods will match the access level of their corresponding properties 
+- Properties do not need anymore to be either `public` or `internal`. All access levels are supported except `open`.
 
 ## [0.3.2] - 2026-08-28
 
