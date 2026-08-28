@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-28
+
+### Changed
+
+- Access levels are now preserved for the enclosing type and members:
+    - Generated initializer will match the access level of the enclosing type
+    - Mutation methods will match the access level of their corresponding properties 
+
 ## [0.3.2] - 2026-08-28
 
 ### Fixed
@@ -40,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/chsxf/CiderKit.Macros/compare/0.3.2...HEAD
+[unreleased]: https://github.com/chsxf/CiderKit.Macros/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/chsxf/CiderKit.Macros/compare/0.3.2...0.4.0
 [0.3.2]: https://github.com/chsxf/CiderKit.Macros/compare/0.3.1...0.3.2
 [0.3.1]: https://github.com/chsxf/CiderKit.Macros/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/chsxf/CiderKit.Macros/compare/0.2.0...0.3.0

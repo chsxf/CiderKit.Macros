@@ -22,9 +22,9 @@ For example, this struct:
 ```swift
 @MutableStruct
 struct TestStruct {
-    @MutableProperty public let i: Int
-    public let s: String
-    @MutableProperty public let b: Bool
+    @MutableProperty let i: Int
+    let s: String
+    @MutableProperty let b: Bool
 }
 ```
 
@@ -32,21 +32,21 @@ will be expanded as follows:
 
 ```swift
 struct TestStruct {
-    public let i: Int
-    public let s: String
-    public let b: Bool
+    let i: Int
+    let s: String
+    let b: Bool
     
-    public init(i: Int, s: String, b: Bool) {
+    init(i: Int, s: String, b: Bool) {
         self.i = i
         self.s = s
         self.b = b
     }
     
-    public func mutated(withI newI: Int) -> Self {
+    func mutated(withI newI: Int) -> Self {
         .init(i: newI, s: s, b: s)
     }
     
-    public func mutated(withB newB: Bool) -> Self {
+    func mutated(withB newB: Bool) -> Self {
         .init(i: i, s: s, b: newB)
     }
 }
@@ -76,9 +76,9 @@ For example, this struct:
 ```swift
 @MutableStruct
 struct TestStruct {
-    @MutableProperty public let i: Int
-    @MutableStructOptional(defaultValue: "\"Hello, world!\"") @MutatingProperty public let s: String
-    @MutableStructOptional(defaultValue: "3.2", keepValueDuringMutation: false) public let f: Float
+    @MutableProperty let i: Int
+    @MutableStructOptional(defaultValue: "\"Hello, world!\"") @MutatingProperty let s: String
+    @MutableStructOptional(defaultValue: "3.2", keepValueDuringMutation: false) let f: Float
 }
 ```
 
@@ -86,21 +86,21 @@ will be expanded as follows:
 
 ```swift
 struct TestStruct {
-    public let i: Int
-    public let s: String
-    public let f: Float
+    let i: Int
+    let s: String
+    let f: Float
 
-    public init(i: Int, s: String? = nil, f: Float? = nil) {
+    init(i: Int, s: String? = nil, f: Float? = nil) {
         self.i = i
         self.s = s ?? "Hello, world!"
         self.f = f ?? 3.2;
     }
 
-    public func mutated(withI newI: Int) -> Self {
+    func mutated(withI newI: Int) -> Self {
         .init(i: newI, s: s)
     }
 
-    public func mutated(withS newS: String) -> Self {
+    func mutated(withS newS: String) -> Self {
         .init(i: i, s: newS)
     }
 }
@@ -125,7 +125,7 @@ To install it, simply add the dependency to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/chsxf/CiderKit.Macros.git", from: "0.3.0"),
+    .package(url: "https://github.com/chsxf/CiderKit.Macros.git", from: "0.4.0"),
 ],
 targets: [
     .target(name: "YourTarget", dependencies: ["CiderKit.Macros"]),
@@ -135,7 +135,7 @@ targets: [
 ## As a Project Dependency in Xcode
 
 - In Xcode, select **File > Add Packages...** and enter `https://github.com/chsxf/CiderKit.Macros.git` in the search field (top-right). 
-- Then select **Up to Next Major Version** as the **Dependency Rule** with `0.3.0` in the associated text field.
+- Then select **Up to Next Major Version** as the **Dependency Rule** with `0.4.0` in the associated text field.
 - Then select the project of your choice in the **Add to Project** list.
 - Finally, click the **Add Package** button.
 
