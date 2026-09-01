@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-01
+
+### Added
+
+- Parameters to force access levels on the generated initializer and `mutated` functions
+
 ## [0.4.1] - 2026-08-28
 
 ### Fixed
@@ -55,7 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/chsxf/CiderKit.Macros/compare/0.4.1...HEAD
+[unreleased]: https://github.com/chsxf/CiderKit.Macros/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/chsxf/CiderKit.Macros/compare/0.4.1...0.5.0
 [0.4.1]: https://github.com/chsxf/CiderKit.Macros/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/chsxf/CiderKit.Macros/compare/0.3.2...0.4.0
 [0.3.2]: https://github.com/chsxf/CiderKit.Macros/compare/0.3.1...0.3.2
