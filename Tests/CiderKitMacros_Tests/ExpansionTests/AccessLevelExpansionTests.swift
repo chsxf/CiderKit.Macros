@@ -141,4 +141,58 @@ final class AccessLevelExpansionTests: XCTestCase {
             """,
             macros: testMacros)
     }
+
+    func testForcedInitializerAccessLevelExpansion() throws {
+        assertMacroExpansion(
+            """
+            @MutableStruct(initAccessLevel: .private)
+            struct TestStruct {
+                @MutatingProperty let i: Int
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStruct {
+                let i: Int
+
+                private init(
+                    i: Int
+                ) {
+                    self.i = i
+                }
+
+                func mutated(withI newI: Int) -> Self {
+                    .init(i: newI)
+                }
+            }
+            """,
+            macros: testMacros)
+    }
+
+    func testForcedMutatingPropertyAccessLevelExpansion() throws {
+        assertMacroExpansion(
+            """
+            @MutableStruct
+            struct TestStruct {
+                @MutatingProperty(accessLevel: .fileprivate) let i: Int
+            }
+            """,
+            expandedSource:
+            """
+            struct TestStruct {
+                let i: Int
+
+                init(
+                    i: Int
+                ) {
+                    self.i = i
+                }
+
+                fileprivate func mutated(withI newI: Int) -> Self {
+                    .init(i: newI)
+                }
+            }
+            """,
+            macros: testMacros)
+    }
 }

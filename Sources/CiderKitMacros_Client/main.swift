@@ -8,7 +8,7 @@ struct Test: CustomStringConvertible {
 
     @MutatingProperty public let a: Int
     public let b: String
-    @MutatingProperty public let c: Bool
+    @MutatingProperty(accessLevel: .fileprivate) public let c: Bool
 
     var description: String {
         "a: \(a), b: \"\(b)\", c: \(c)"

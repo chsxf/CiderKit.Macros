@@ -11,7 +11,11 @@ public struct MutableStructMacro: MemberMacro {
             throw MacroErrors.notStructType
         }
 
-        let structAccessLevel: AccessLevel = structEnclosingType.accessLevel
+        var structAccessLevel: AccessLevel = structEnclosingType.accessLevel
+        if let initAccessLevelExpr = node.argument(for: "initAccessLevel")?.as(MemberAccessExprSyntax.self) {
+            structAccessLevel = try AccessLevel(from: initAccessLevelExpr.declName.trimmedDescription)
+        }
+
         let accessibleStoredProperties = structEnclosingType.accessibleStoredProperties()
 
         let mutatingPropertyCount = accessibleStoredProperties.count { $0.hasAttribute("MutatingProperty") }
@@ -39,7 +43,11 @@ public struct MutableStructMacro: MemberMacro {
                 }
             }
 
-            if storedProperty.hasAttribute("MutatingProperty") {
+            if let mutatingAttribute = storedProperty.getAttribute("MutatingProperty") {
+                if let propertyAccessLevelExpr = mutatingAttribute.argument(for: "accessLevel")?.as(MemberAccessExprSyntax.self) {
+                    memberInfo.accessLevel = try AccessLevel(from: propertyAccessLevelExpr.declName.trimmedDescription)
+                }
+
                 mutatingProperties.append(memberInfo)
             }
 
